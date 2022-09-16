@@ -9,8 +9,7 @@
     
 </style>
 <script setup>
-import { ref, defineProps } from 'vue';
-import { onMounted } from '@vue/runtime-core';
+import { defineProps, onMounted, ref } from 'vue';
 import  Comment  from './Comment.vue';
 import { useAppStore } from "../appStore";
 

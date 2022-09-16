@@ -7,21 +7,20 @@ const initialAppStore = () => ({
 });
 
 const getEveryLevelReply = (id, currentPosts) => {
-  const index = currentPosts.replies.findIndex((post) => post.parentId === id); 
-  if(index !== -1) return currentPosts;
+ 
+  if (currentPosts.postId === id) return currentPosts;
 
   for(let reply of currentPosts.replies) {
-
     let matchedPost = getEveryLevelReply(id, reply);
     if(matchedPost) return matchedPost
   }
-
-  return currentPosts;
+  return null;
 }
 
 const getReplies  = (postId, allPosts) => {
   for(let index = 0; index < allPosts.length; index++) {
     let matchedPost = getEveryLevelReply(postId, allPosts[index]);
+    console.log("Matched post", matchedPost);
     if(matchedPost) return matchedPost.replies;
   }
   return [];

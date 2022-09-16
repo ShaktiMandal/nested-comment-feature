@@ -26,7 +26,7 @@
         />
       </div>
     </div>
-    <div class="reply-list">
+    <div class="reply-list" v-if="showReplies">
       <div v-if="isEditing">
         <CommentForm @click="onEditPost" @input="onInput" />
       </div>
@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-import { defineProps, onMounted, ref } from "vue";
+import { computed, defineProps, onMounted, ref } from "vue";
 import { useAppStore } from "../appStore";
 import CommentList from "./CommentList.vue";
 import CommentForm from "./CommentForm.vue";
@@ -55,14 +55,17 @@ const isEditing = ref(false);
 const isDeleting = ref(false);
 const postMessage = ref("");
 const replies = ref([]);
-let selectedParentId = null;
-let selectedPostId = null;
-defineProps({
+const selectedParentId = ref(null);
+const selectedPostId = ref(null);
+const props = defineProps({
   details: {
     type: Object,
   },
 });
 
+const showReplies = computed(()=> {
+  return isReplying.value && (props.details.parentId == null ? true : selectedPostId.value === props.details.postId);
+})
 onMounted(() =>   replies.value = getComments(selectedPostId))
 
 const uniqueId = () => {
@@ -76,9 +79,9 @@ const onReply = (parentId, postId) => {
   isReplying.value = !isReplying.value;
   isDeleting.value = false;
   isEditing.value = false;
-  selectedPostId = postId;
-  selectedParentId = parentId;
-  //replies.value = getComments(selectedPostId)
+  selectedPostId.value = postId;
+  selectedParentId.value = parentId;
+  replies.value = getComments(selectedPostId.value)
     // selectedParentId == null
     //   ? getComments(selectedPostId)
     //   : getComments(selectedParentId);
@@ -88,45 +91,44 @@ const onEdit = (parentId, postId) => {
   isEditing.value = true;
   isReplying.value = false;
   isDeleting.value = false;
-  selectedPostId = postId;
-  selectedParentId = parentId;
+  selectedPostId.value = postId;
+  selectedParentId.value = parentId;
 };
 
 const onDelete = async (parentId, postId) => {
   isDeleting.value = true;
   isEditing.value = false;
   isReplying.value = false;
-  selectedPostId = postId;
-  selectedParentId = parentId;
+  selectedPostId.value = postId;
+  selectedParentId.value = parentId;
   await onDeleteComment(postId);
   replies.value =
-    selectedParentId == null
-      ? getComments(selectedPostId)
-      : getComments(selectedParentId);
+    selectedParentId.value == null
+      ? getComments(selectedPostId.value)
+      : getComments(selectedParentId.value);
 };
 
 const onEditPost = () => {
   isEditing.value = false;
   onEditComment(selectedPostId);
   replies.value =
-    selectedParentId == null
-      ? getComments(selectedPostId)
-      : getComments(selectedParentId);
+    selectedParentId.value == null
+      ? getComments(selectedPostId.value)
+      : getComments(selectedParentId.value);
 };
 
 const onReplyPost = async () => {
-  isReplying.value = false;
   const postData = {
     postId: uniqueId(),
     message: postMessage.value,
     createAt: Date.now(),
     createdBy: Date.now(),
     replies: [],
-    parentId: selectedPostId,
+    parentId: selectedPostId.value,
   };
   // parentId: selectedParentId == null ? selectedPostId : selectedParentId,
   onPostComment(postData).then( () => {
-    replies.value = getComments(selectedPostId);
+    replies.value = getComments(selectedPostId.value);
   
   });
   
