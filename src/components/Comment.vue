@@ -28,10 +28,10 @@
     </div>
     <div class="reply-list" v-if="showReplies">
       <div v-if="isEditing">
-        <CommentForm @click="onEditPost" @input="onInput" />
+        <CommentForm @on-post="onEditPost" @input="onInput" />
       </div>
       <div v-if="isReplying">
-        <CommentForm @click="onReplyPost" @input="onInput" />
+        <CommentForm @on-post="onReplyPost" @input="onInput" />
       </div>
       <CommentList
         v-if="replies.length"
@@ -82,9 +82,6 @@ const onReply = (parentId, postId) => {
   selectedPostId.value = postId;
   selectedParentId.value = parentId;
   replies.value = getComments(selectedPostId.value)
-    // selectedParentId == null
-    //   ? getComments(selectedPostId)
-    //   : getComments(selectedParentId);
 };
 
 const onEdit = (parentId, postId) => {
