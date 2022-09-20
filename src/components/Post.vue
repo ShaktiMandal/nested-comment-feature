@@ -1,6 +1,6 @@
 <template>
   <div class="post">
-    <CommentForm @click="onPost" @input="onInput" />
+    <CommentForm @on-post="onPost" @input="onInput" />
     <CommentList />
   </div>
 </template>

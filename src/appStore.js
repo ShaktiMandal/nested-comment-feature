@@ -6,20 +6,20 @@ const initialAppStore = () => ({
   comments: [],
 });
 
-const getEveryLevelReply = (id, currentPosts) => {
+const getEveryLevelReply = (parentId, currentPosts) => {
  
-  if (currentPosts.postId === id) return currentPosts;
+  if (currentPosts.postId === parentId) return currentPosts;
 
   for(let reply of currentPosts.replies) {
-    let matchedPost = getEveryLevelReply(id, reply);
+    let matchedPost = getEveryLevelReply(parentId, reply);
     if(matchedPost) return matchedPost
   }
   return null;
 }
 
-const getReplies  = (postId, allPosts) => {
+const getReplies  = (parentId, allPosts) => {
   for(let index = 0; index < allPosts.length; index++) {
-    let matchedPost = getEveryLevelReply(postId, allPosts[index]);
+    let matchedPost = getEveryLevelReply(parentId, allPosts[index]);
     console.log("Matched post", matchedPost);
     if(matchedPost) return matchedPost.replies;
   }

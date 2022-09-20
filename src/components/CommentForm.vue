@@ -45,6 +45,6 @@ const onInput = (event) => {
   emit('input', event);
 };
 const onPost = () => {
-  emit('click');
+  emit('onPost');
 };
 </script>
